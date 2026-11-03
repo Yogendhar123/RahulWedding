@@ -34,7 +34,7 @@ Desktop character display height is 472px (540px on large screens), below the ne
 
 ## Music
 
-Music is off by default and only starts from the manual toggle. With no audio file supplied, the toggle produces an original, gentle tanpura-inspired synthesized drone through Web Audio. Set `media.music` to your licensed track URL to replace it. Audio stops when the tab is hidden and must be manually restarted.
+Music attempts to start automatically on page load. Browsers may block audible autoplay; in that case it starts on the first click/tap or keypress, including opening the invitation. The toggle reports “on” only when audio is actually playing and allows manual mute. Muting prevents subsequent interactions from restarting music. With no audio file supplied, an original, gentle tanpura-inspired synthesized drone plays through Web Audio. Set `media.music` to your licensed track URL to replace it. Audio pauses when the tab is hidden and resumes when visible unless manually muted.
 
 ## RSVP and privacy
 
