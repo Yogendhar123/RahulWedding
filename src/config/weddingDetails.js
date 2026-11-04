@@ -2,6 +2,7 @@
 import groomVideo from '../../assets/Groom_walking_in_place_dfd0f81e.mp4?url';
 import brideVideo from '../../assets/Bride_walking_in_place_671ecc04.mp4?url';
 import scrollVideo from '../../assets/WhatsApp Video 2026-11-02 at 1.19.01 PM.mp4?url';
+import musicTrack from '../../assets/marriageAudio.mp3?url';
 import { mediaAssets } from './mediaAssets';
 export const weddingDetails = {
   blessing: 'Shree Lakshmi Venkateshwara Prasanna',
@@ -27,7 +28,7 @@ export const weddingDetails = {
     // Put your own mandap image/video in public/assets and set its URL here.
     backgroundVideo: '', backgroundPoster: '',
     // Optional licensed audio URL. Without it, the music toggle plays a gentle synthesized ambience.
-    music: './assets/marriageAudio.mpeg',
+    music: musicTrack,
   },
   // Optional HTTPS endpoint receiving JSON. Empty = clearly labelled browser-local RSVP only.
   rsvpEndpoint: '',
