@@ -55,6 +55,8 @@ export default function AmbientMusic() {
     } catch (error) {
       if (!mountedRef.current) return;
       setPlaying(false);
+      // A failed load (e.g. 404) must not be cached; rebuild the element next try.
+      if (error.name !== 'NotAllowedError' && audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
       setMessage(error.name === 'NotAllowedError' ? 'Music will start when you interact with the invitation.' : 'Audio is unavailable in this browser.');
     }
   }, []);
