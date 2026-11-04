@@ -27,7 +27,7 @@ export const weddingDetails = {
     // Put your own mandap image/video in public/assets and set its URL here.
     backgroundVideo: '', backgroundPoster: '',
     // Optional licensed audio URL. Without it, the music toggle plays a gentle synthesized ambience.
-    music: '',
+    music: './assets/marriageAudio.mpeg',
   },
   // Optional HTTPS endpoint receiving JSON. Empty = clearly labelled browser-local RSVP only.
   rsvpEndpoint: '',
