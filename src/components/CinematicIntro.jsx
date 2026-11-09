@@ -4,11 +4,16 @@ import { ArrowDown, ArrowUpRight, LoaderCircle, RotateCcw } from 'lucide-react';
 import { weddingDetails as details } from '../config/weddingDetails';
 import { KeyedVideo } from './KeyedVideo';
 
+// How long the couple takes to walk in (seconds). Lower = faster; the walking footage speeds up to match.
+const ENTRANCE_SECONDS = 7;
+// Keep the complete original 10-second scroll sequence, including the final petals and sparkles.
+// Only switch to the crisp, high-resolution poster after the animation has fully completed.
+const SCROLL_SETTLED_SECONDS = 9.85;
+
 export function Ornament({ light = false }) { return <div className={`ornament ${light ? 'light' : ''}`} aria-hidden="true"><span/><i>✦</i><b>❋</b><i>✦</i><span/></div>; }
-export function Petals({ paused }) {
-  const reduced = useReducedMotion();
-  if (reduced) return null;
-  return <div className={`atmosphere ${paused ? 'paused' : ''}`} aria-hidden="true">{Array.from({ length: 18 }, (_, i) => <span key={i} className={i % 3 === 0 ? 'petal' : 'particle'} style={{ '--left': `${(i * 37 + 11) % 100}%`, '--delay': `${-(i * 1.7)}s`, '--duration': `${14 + i % 8}s`, '--drift': `${i % 2 ? 90 : -70}px` }}/>)}</div>;
+export function Petals({ paused, enabled = true }) {
+  if (!enabled) return null;
+  return <div className={`atmosphere ${paused ? 'paused' : ''}`} aria-hidden="true">{Array.from({ length: 28 }, (_, i) => <span key={i} className={i % 2 === 0 ? 'petal' : 'particle'} style={{ '--left': `${(i * 37 + 11) % 100}%`, '--delay': `${-(i * 1.7)}s`, '--duration': `${14 + i % 8}s`, '--drift': `${i % 2 ? 90 : -70}px` }}/>)}</div>;
 }
 
 export default function CinematicIntro() {
@@ -18,7 +23,7 @@ export default function CinematicIntro() {
   const heroRef = useRef(null), inView = useInView(heroRef, { amount: 0.12 });
   const groomRef = useRef(null), brideRef = useRef(null), scrollRef = useRef(null), backgroundRef = useRef(null);
   const [phase, setPhase] = useState('closed'), [textVisible, setTextVisible] = useState(false), [hidden, setHidden] = useState(document.hidden), [notice, setNotice] = useState('');
-  const phaseRef = useRef(phase), clock = useRef(0), scrollStarted = useRef(false), generation = useRef(0), started = useRef(false), controls = useRef(null), scrollPreload = useRef(null);
+  const phaseRef = useRef(phase), clock = useRef(0), scrollStarted = useRef(false), generation = useRef(0), started = useRef(false), controls = useRef(null), scrollPreload = useRef(null), settled = useRef(false);
   const progress = useMotionValue(0);
   // Begin just beyond the edge so the full entrance, not only its end, is visible.
   const groomX = useTransform(progress, value => `calc(${-(1 - value) * 50}vw + ${1 - value} * var(--character-gap))`);
@@ -42,7 +47,7 @@ export default function CinematicIntro() {
     const brideReady = await brideRef.current.load();
     if (token !== generation.current) return;
     if (!groomReady || !brideReady) setNotice('Some footage could not load. Matching final-pose images are displayed instead.');
-    [groomRef.current.video, brideRef.current.video].forEach(video => { if (Number.isFinite(video.duration)) video.playbackRate = video.duration / 10; });
+    [groomRef.current.video, brideRef.current.video].forEach(video => { if (Number.isFinite(video.duration)) video.playbackRate = video.duration / ENTRANCE_SECONDS; });
     // Fetch the scroll footage while the couple walks in (after the two character videos, never alongside them),
     // so it is ready the moment they arrive and the invitation never has to wait on screen.
     scrollPreload.current = scrollRef.current.load();
@@ -56,14 +61,14 @@ export default function CinematicIntro() {
     if (details.media.backgroundVideo && phase !== 'closed') safePlay(backgroundRef.current);
     if (phase === 'entrance') {
       safePlay(groomRef.current?.video); safePlay(brideRef.current?.video);
-      if (!controls.current) controls.current = animate(progress, 1, { duration: 10, ease: 'linear' });
+      if (!controls.current) controls.current = animate(progress, 1, { duration: ENTRANCE_SECONDS, ease: 'linear' });
       else controls.current.play();
     } else if (phase === 'scroll') safePlay(scrollRef.current?.video);
     let previous = performance.now(), raf;
     const tick = (now) => {
       const delta = Math.min((now - previous) / 1000, 0.1); previous = now;
       if (phaseRef.current === 'entrance' || phaseRef.current === 'scroll') clock.current += delta;
-      if (phaseRef.current === 'entrance' && clock.current >= 10 && !scrollStarted.current) {
+      if (phaseRef.current === 'entrance' && clock.current >= ENTRANCE_SECONDS && !scrollStarted.current) {
         scrollStarted.current = true; setPhase('scroll-loading');
         const token = generation.current;
         (scrollPreload.current || scrollRef.current.load()).then(ready => {
@@ -73,7 +78,9 @@ export default function CinematicIntro() {
           else { scrollRef.current?.hold(); setTextVisible(true); setPhase('complete'); }
         });
       }
-      if (phaseRef.current === 'scroll' && (scrollRef.current?.video?.currentTime >= 4.6 || clock.current > 6)) setTextVisible(true);
+      if (phaseRef.current === 'scroll' && !settled.current && (scrollRef.current?.video?.currentTime >= SCROLL_SETTLED_SECONDS || clock.current > SCROLL_SETTLED_SECONDS + 2)) {
+        settled.current = true; scrollRef.current?.hold(); setTextVisible(true); setPhase('complete');
+      }
       raf = requestAnimationFrame(tick);
     };
     if (phase === 'entrance' || phase === 'scroll') raf = requestAnimationFrame(tick);
@@ -88,7 +95,7 @@ export default function CinematicIntro() {
   function playFullAnimation() {
     // The reduced-motion branch never downloaded or played media. Start that
     // same intro only after an explicit user opt-in, preserving the OS default.
-    started.current = false; clock.current = 0; scrollStarted.current = false; scrollPreload.current = null;
+    started.current = false; clock.current = 0; scrollStarted.current = false; scrollPreload.current = null; settled.current = false;
     controls.current?.stop(); controls.current = null;
     [groomRef, brideRef, scrollRef].forEach(ref => ref.current?.reset());
     progress.set(0); setTextVisible(false);
@@ -99,7 +106,7 @@ export default function CinematicIntro() {
     {details.media.backgroundPoster && <img className="mandap-background" src={details.media.backgroundPoster} alt="Wedding mandap"/>}
     {opened && details.media.backgroundVideo && <video className="mandap-background" ref={backgroundRef} src={details.media.backgroundVideo} poster={details.media.backgroundPoster || undefined} muted playsInline loop preload="metadata"/>}
     <div className="architectural-frame" aria-hidden="true"><div className="arch arch-left"/><div className="arch arch-right"/><div className="hero-halo"/><div className="hanging-ornament left">❋</div><div className="hanging-ornament right">❋</div></div>
-    <Petals paused={!inView || hidden}/>
+    <Petals paused={!inView || hidden} enabled={!reduced}/>
     <div className="hero-topline"><span>A WEDDING CELEBRATION</span><span>BENGALURU, INDIA</span></div>
     {!opened && <motion.div className="invitation-cover" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : 1 }}>
       <div className="cover-blessing">{details.blessing}</div><Ornament light/>

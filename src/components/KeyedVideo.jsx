@@ -9,6 +9,8 @@ void main(){
  float alpha=1.0-smoothstep(0.035,0.11,excess);
  // The source's green spotlight is outside the parchment, not part of the scroll.
  if(isScroll>0.5 && uv.y<0.12 && uv.x>0.2 && uv.x<0.8) alpha=0.0;
+ // The spotlight above the top rod is lime (red ~ green, low blue); parchment and brass are redder.
+ if(isScroll>0.5 && uv.y<0.17 && (c.r-c.g)<0.035 && c.b<c.r*0.62) alpha=0.0;
  // Despill mixed edge pixels before premultiplication, avoiding green fringes.
  if(excess>0.02)c.g=min(c.g,max(c.r,c.b)+0.02);
  gl_FragColor=vec4(c.rgb*alpha,alpha);

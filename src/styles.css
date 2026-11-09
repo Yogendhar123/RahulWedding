@@ -44,3 +44,43 @@
 .site-footer>p.no-gifts { font-size: 17px; line-height: 1.5; color: #8a6c43; max-width: 460px; margin: 14px auto 0; }
 @media(min-width:761px) { .parchment-copy { top: 35%; height: 42%; } }
 @media(max-width:760px) { .site-footer>p.no-gifts { font-size: 16px; max-width: 320px; } }
+
+/* Final scroll artwork alignment: keep all invitation copy below the lotus and inside the parchment. */
+.scroll-scene { width: min(458px, 82vw); aspect-ratio: .958; }
+.parchment-copy {
+  top: 40%;
+  left: 17%;
+  width: 66%;
+  height: 37%;
+  padding: 0 2%;
+  box-sizing: border-box;
+  justify-content: center;
+  gap: 0;
+}
+.parchment-blessing { font-size: clamp(9px, 1.5vw, 12px); line-height: 1.15; margin: 0 0 5px; }
+.parchment-kicker { display: block; font-size: clamp(5px, .75vw, 7px); margin: 0 0 6px; }
+.parchment-copy h2 { font-size: clamp(15px, 2.25vw, 20px); line-height: 1.05; margin: 2px 0; }
+.parchment-copy h2 small { font-size: .58em; }
+.parchment-with { font-size: clamp(11px, 1.5vw, 15px); margin: 1px 0; }
+.parchment-divider { font-size: 10px; margin: 4px 0; }
+.parchment-message { font-size: clamp(9px, 1.45vw, 12px); line-height: 1.18; max-width: 100%; margin: 2px 0; }
+.parchment-date { font-size: clamp(13px, 1.9vw, 17px); line-height: 1.1; margin-top: 5px; }
+.parchment-city { font-size: 6px; margin-top: 3px; }
+@media(max-width:760px) {
+  .scroll-scene { width: min(400px, 92vw); }
+  .parchment-copy { top: 40%; height: 37%; }
+  .parchment-blessing { font-size: 9px; margin-bottom: 4px; }
+  .parchment-kicker { display: block; font-size: 5px; margin-bottom: 4px; }
+  .parchment-copy h2 { font-size: clamp(14px, 3.4vw, 17px); line-height: 1.02; }
+  .parchment-copy h2 small { font-size: 9px; }
+  .parchment-with { font-size: 11px; }
+  .parchment-divider { margin: 3px 0; font-size: 8px; }
+  .parchment-message { font-size: 9px; line-height: 1.15; }
+  .parchment-date { font-size: 13px; margin-top: 4px; }
+  .parchment-city { font-size: 5px; margin-top: 2px; }
+}
+@media(max-width:370px) {
+  .parchment-copy { top: 39%; height: 39%; }
+  .parchment-copy h2 { font-size: 13px; }
+  .parchment-message { font-size: 8px; }
+}
