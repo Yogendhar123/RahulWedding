@@ -5,14 +5,12 @@ void main(){uv=vec2((position.x+1.0)*0.5,(1.0-position.y)*0.5);gl_Position=vec4(
 const fragmentSource = `precision mediump float; varying vec2 uv; uniform sampler2D frame; uniform vec2 crop; uniform float isScroll;
 void main(){
  vec4 c=texture2D(frame,vec2(mix(crop.x,crop.y,uv.x),uv.y));
+ // Remove only the pure green production background. Do not mask the upper scroll,
+ // because the hanging cords and finials are part of the reference artwork.
  float excess=c.g-max(c.r,c.b);
- float alpha=1.0-smoothstep(0.035,0.11,excess);
- // The source's green spotlight is outside the parchment, not part of the scroll.
- if(isScroll>0.5 && uv.y<0.12 && uv.x>0.2 && uv.x<0.8) alpha=0.0;
- // The spotlight above the top rod is lime (red ~ green, low blue); parchment and brass are redder.
- if(isScroll>0.5 && uv.y<0.17 && (c.r-c.g)<0.035 && c.b<c.r*0.62) alpha=0.0;
- // Despill mixed edge pixels before premultiplication, avoiding green fringes.
- if(excess>0.02)c.g=min(c.g,max(c.r,c.b)+0.02);
+ float alpha=1.0-smoothstep(0.035,0.13,excess);
+ // Despill green from anti-aliased edges while preserving warm gold details.
+ if(excess>0.015)c.g=min(c.g,max(c.r,c.b)+0.015);
  gl_FragColor=vec4(c.rgb*alpha,alpha);
 }`;
 
@@ -42,7 +40,7 @@ export const KeyedVideo = forwardRef(function KeyedVideo({ src, poster, role, fl
 
   useEffect(() => {
     const canvas = canvasRef.current, video = videoRef.current;
-    const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: true });
+    const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: false, powerPreference: 'high-performance' });
     if (!gl) { setFailed(true); return; }
     const compile = (type, source) => {
       const shader = gl.createShader(type); gl.shaderSource(shader, source); gl.compileShader(shader);

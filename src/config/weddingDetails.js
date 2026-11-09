@@ -1,7 +1,7 @@
 // All invitation copy and media can be edited here without changing components.
 import groomVideo from '../../assets/Groom_walking_in_place_dfd0f81e.mp4?url';
 import brideVideo from '../../assets/Bride_walking_in_place_671ecc04.mp4?url';
-import scrollVideo from '../../assets/WhatsApp Video 2026-11-02 at 1.19.01 PM.mp4?url';
+import scrollVideo from '../../assets/scroll-vertical-unroll.mp4?url';
 import musicTrack from '../../assets/marriageAudio.mp3?url';
 import { mediaAssets } from './mediaAssets';
 export const weddingDetails = {
@@ -9,6 +9,7 @@ export const weddingDetails = {
   groom: { name: 'Rahul', fullName: 'Chi. Rahul M.R', qualification: 'B.E' },
   bride: { name: 'Bhavani', fullName: 'Chi. Sou. Bhavani D. Naveen', qualification: 'B.V.A' },
   invitation: 'We request the honour of your presence with family and friends on the wedding occasion.',
+  invitation2: 'With the blessings of our families, we invite you to join us as we begin our journey of love, togetherness and a lifetime of happiness.',
   weddingDate: '2026-11-22T09:15:00+05:30',
   dateLabel: '21 & 22 November 2026',
   events: [

@@ -1,0 +1,17 @@
+SCROLL ORIENTATION FIX
+======================
+
+What changed:
+- Replaced the landscape scroll footage with assets/scroll-vertical-unroll.mp4.
+- The new clip is portrait-proportioned (960x1000) and reveals the exact scroll-final.png artwork from top to bottom.
+- Updated weddingDetails.js to import the new clip.
+- Updated mediaAssets.js to use the full frame crop [0, 1].
+- Updated KeyedVideo.jsx to key only the green background and preserve the hanging cords/finials.
+- Updated the scroll scene aspect ratio to match the portrait artwork.
+- Updated the scroll completion timing to the 12-second clip.
+
+Run:
+  npm install
+  npm run dev
+
+The scroll poster remains assets/scroll-final.png.

@@ -84,3 +84,29 @@
   .parchment-copy h2 { font-size: 13px; }
   .parchment-message { font-size: 8px; }
 }
+
+/* Vertical invitation scroll: render the entire portrait clip without a landscape center-crop. */
+.scroll-scene {
+  width: min(458px, 82vw);
+  aspect-ratio: 1202 / 1254;
+  height: auto;
+  max-height: calc(100% - 12px);
+  flex: 0 1 auto;
+  overflow: visible;
+}
+.scroll-scene > .keyed-video {
+  width: 100%;
+  height: 100%;
+}
+.scroll-scene .keyed-video img,
+.scroll-scene .keyed-video canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+@media (max-height: 700px) {
+  .scroll-scene {
+    width: min(390px, 72vw);
+    max-height: calc(100% - 8px);
+  }
+}

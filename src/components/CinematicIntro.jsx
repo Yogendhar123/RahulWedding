@@ -6,9 +6,8 @@ import { KeyedVideo } from './KeyedVideo';
 
 // How long the couple takes to walk in (seconds). Lower = faster; the walking footage speeds up to match.
 const ENTRANCE_SECONDS = 7;
-// Keep the complete original 10-second scroll sequence, including the final petals and sparkles.
-// Only switch to the crisp, high-resolution poster after the animation has fully completed.
-const SCROLL_SETTLED_SECONDS = 9.85;
+// Play the complete 12-second portrait scroll reveal before switching to the crisp final poster.
+const SCROLL_SETTLED_SECONDS = 11.85;
 
 export function Ornament({ light = false }) { return <div className={`ornament ${light ? 'light' : ''}`} aria-hidden="true"><span/><i>✦</i><b>❋</b><i>✦</i><span/></div>; }
 export function Petals({ paused, enabled = true }) {
