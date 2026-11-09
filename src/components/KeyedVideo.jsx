@@ -35,6 +35,7 @@ export const KeyedVideo = forwardRef(function KeyedVideo({ src, poster, role, fl
     }),
     draw: () => drawRef.current?.(),
     hold: () => { videoRef.current?.pause(); setFinished(true); },
+    reset: () => setFinished(false),
   }), [src]);
 
   useEffect(() => {
@@ -93,7 +94,7 @@ export const KeyedVideo = forwardRef(function KeyedVideo({ src, poster, role, fl
   // Mirror the display, not the moving entrance container, so both footage and
   // fallback poses face inward without reversing the entrance animation.
   return <div className={`keyed-video keyed-${role}${flipX ? ' keyed-mirrored' : ''}`}>
-    <img src={poster} alt={role === 'scroll' ? '' : `${role === 'groom' ? 'Rahul' : 'Bhavani'} in traditional wedding attire`} className={frameReady && !failed && !finished ? 'poster-hidden' : ''} />
+    <img src={poster} alt={role === 'scroll' ? '' : `${role === 'groom' ? 'Rahul' : 'Bhavani'} in traditional wedding attire`} className={(role === 'scroll' ? (failed || finished) : !(frameReady && !failed && !finished)) ? '' : 'poster-hidden'} />
     <canvas ref={canvasRef} className={failed || finished ? 'canvas-hidden' : ''} aria-hidden="true" />
     <video ref={videoRef} poster={poster} muted playsInline preload="metadata" loop={false} aria-hidden="true" className="source-video" onError={() => setFailed(true)} onEnded={() => { setFinished(true); onEnded?.(); }} />
   </div>;

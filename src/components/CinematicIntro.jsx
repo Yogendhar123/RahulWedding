@@ -18,7 +18,7 @@ export default function CinematicIntro() {
   const heroRef = useRef(null), inView = useInView(heroRef, { amount: 0.12 });
   const groomRef = useRef(null), brideRef = useRef(null), scrollRef = useRef(null), backgroundRef = useRef(null);
   const [phase, setPhase] = useState('closed'), [textVisible, setTextVisible] = useState(false), [hidden, setHidden] = useState(document.hidden), [notice, setNotice] = useState('');
-  const phaseRef = useRef(phase), clock = useRef(0), scrollStarted = useRef(false), generation = useRef(0), started = useRef(false), controls = useRef(null);
+  const phaseRef = useRef(phase), clock = useRef(0), scrollStarted = useRef(false), generation = useRef(0), started = useRef(false), controls = useRef(null), scrollPreload = useRef(null);
   const progress = useMotionValue(0);
   // Begin just beyond the edge so the full entrance, not only its end, is visible.
   const groomX = useTransform(progress, value => `calc(${-(1 - value) * 50}vw + ${1 - value} * var(--character-gap))`);
@@ -36,13 +36,16 @@ export default function CinematicIntro() {
     if (force) setForceAnimation(true);
     started.current = true; setNotice(''); setPhase('loading');
     const token = ++generation.current;
-    if (reduced && !force) { progress.set(1); setTextVisible(true); setPhase('complete'); return; }
+    if (reduced && !force) { progress.set(1); scrollRef.current?.hold(); setTextVisible(true); setPhase('complete'); return; }
     // Load sequentially, never download all three videos together. The scroll waits until arrival.
     const groomReady = await groomRef.current.load();
     const brideReady = await brideRef.current.load();
     if (token !== generation.current) return;
     if (!groomReady || !brideReady) setNotice('Some footage could not load. Matching final-pose images are displayed instead.');
     [groomRef.current.video, brideRef.current.video].forEach(video => { if (Number.isFinite(video.duration)) video.playbackRate = video.duration / 10; });
+    // Fetch the scroll footage while the couple walks in (after the two character videos, never alongside them),
+    // so it is ready the moment they arrive and the invitation never has to wait on screen.
+    scrollPreload.current = scrollRef.current.load();
     clock.current = 0; setPhase('entrance');
   }
 
@@ -63,11 +66,11 @@ export default function CinematicIntro() {
       if (phaseRef.current === 'entrance' && clock.current >= 10 && !scrollStarted.current) {
         scrollStarted.current = true; setPhase('scroll-loading');
         const token = generation.current;
-        scrollRef.current.load().then(ready => {
+        (scrollPreload.current || scrollRef.current.load()).then(ready => {
           if (token !== generation.current) return;
           clock.current = 0;
           if (ready) setPhase('scroll');
-          else { setTextVisible(true); setPhase('complete'); }
+          else { scrollRef.current?.hold(); setTextVisible(true); setPhase('complete'); }
         });
       }
       if (phaseRef.current === 'scroll' && (scrollRef.current?.video?.currentTime >= 4.6 || clock.current > 6)) setTextVisible(true);
@@ -85,8 +88,9 @@ export default function CinematicIntro() {
   function playFullAnimation() {
     // The reduced-motion branch never downloaded or played media. Start that
     // same intro only after an explicit user opt-in, preserving the OS default.
-    started.current = false; clock.current = 0; scrollStarted.current = false;
+    started.current = false; clock.current = 0; scrollStarted.current = false; scrollPreload.current = null;
     controls.current?.stop(); controls.current = null;
+    [groomRef, brideRef, scrollRef].forEach(ref => ref.current?.reset());
     progress.set(0); setTextVisible(false);
     open(true);
   }
@@ -109,7 +113,7 @@ export default function CinematicIntro() {
     </motion.div>}
     <div className={`cinematic-stage ${opened ? 'stage-visible' : ''}`} aria-hidden={!opened}>
       <motion.div className="character character-groom" style={{ x: reduced ? 0 : groomX }}><KeyedVideo ref={groomRef} src={details.media.groom} poster={details.media.groomPoster} role="groom" flipX={details.media.groomFlipX} crop={details.media.groomCrop}/></motion.div>
-      <div className={`scroll-scene ${phase === 'entrance' ? 'scroll-waiting' : ''}`}>
+      <div className={`scroll-scene ${phase === 'entrance' || phase === 'scroll-loading' ? 'scroll-waiting' : ''}`}>
         <KeyedVideo ref={scrollRef} src={details.media.scroll} poster={details.media.scrollPoster} role="scroll" crop={details.media.scrollCrop} onEnded={() => { setTextVisible(true); setPhase('complete'); }}/>
         <motion.div className="parchment-copy" initial={false} animate={{ opacity: textVisible ? 1 : 0 }} transition={{ duration: reduced ? 0 : 1.2 }}>
           <p className="parchment-blessing">{details.blessing}</p><p className="parchment-kicker">TOGETHER WITH OUR FAMILIES</p>

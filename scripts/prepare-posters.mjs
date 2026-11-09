@@ -7,6 +7,8 @@ import { mediaAssets } from '../src/config/mediaAssets.js';
 // Matching transparent final-pose fallbacks, derived only from the supplied footage.
 await mkdir('assets', { recursive: true });
 for (const [role, { file, posterTime: time, crop: [left, right] }] of Object.entries(mediaAssets)) {
+  // The scroll poster is built by scripts/make_scroll_poster.py (clean, 2x, petals removed).
+  if (role === 'scroll') continue;
   const temp = `assets/${role}-frame.png`;
   const result = spawnSync(ffmpeg, ['-hide_banner', '-loglevel', 'error', '-ss', String(time), '-i', `assets/${file}`, '-frames:v', '1', '-y', temp]);
   if (result.status !== 0) throw new Error(result.stderr.toString());

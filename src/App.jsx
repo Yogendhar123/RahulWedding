@@ -78,6 +78,6 @@ export default function App() {
       <section className="quote-section"><Reveal><Ornament light/><p>“Together is a beautiful<br/><em>place to be.”</em></p><span>RAHUL & BHAVANI · 2026</span></Reveal></section>
       {/* <RSVP/> */}
     </main>
-    <footer className="site-footer"><div className="footer-monogram">R<span>&</span>B</div><Ornament/><p>{details.footer}</p><button className="share-button" onClick={share}><Share2 size={16}/>Share the invitation<ArrowUpRight size={15}/></button><div className="share-status" role="status">{shareStatus}</div><div className="footer-bottom"><span>WITH LOVE, THE TWO FAMILIES</span><span>{details.dateLabel.toUpperCase()} · BENGALURU</span><span>MADE FOR OUR FOREVER <Heart size={10}/></span></div></footer>
+    <footer className="site-footer"><div className="footer-monogram">R<span>&</span>B</div><Ornament/><p>{details.footer}</p><p className="no-gifts">{details.noGifts}</p><button className="share-button" onClick={share}><Share2 size={16}/>Share the invitation<ArrowUpRight size={15}/></button><div className="share-status" role="status">{shareStatus}</div><div className="footer-bottom"><span>WITH LOVE, THE TWO FAMILIES</span><span>{details.dateLabel.toUpperCase()} · BENGALURU</span><span>MADE FOR OUR FOREVER <Heart size={10}/></span></div></footer>
   </>;
 }

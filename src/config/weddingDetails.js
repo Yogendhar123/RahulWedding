@@ -32,5 +32,6 @@ export const weddingDetails = {
   },
   // Optional HTTPS endpoint receiving JSON. Empty = clearly labelled browser-local RSVP only.
   rsvpEndpoint: '',
+  noGifts: 'No Gifts or presents please, your blessings and good wishes are all we seek.',
   footer: 'Your presence is our most cherished gift. We look forward to celebrating this beautiful beginning with you.',
 };
