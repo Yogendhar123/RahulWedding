@@ -14,7 +14,7 @@ import glob, os, subprocess, tempfile
 import cv2, numpy as np
 
 VIDEO = 'assets/WhatsApp Video 2026-11-02 at 1.19.01 PM.mp4'
-OUT = 'assets/scroll-poster.png'
+OUT = 'assets/scroll-final.png'
 CROP = (0.23, 0.77)        # must match src/config/mediaAssets.js
 SCALE = 3
 MANDALA = (425, 112, 72)   # cx, cy, radius in source pixels

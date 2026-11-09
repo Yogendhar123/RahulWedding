@@ -24,7 +24,7 @@ export const weddingDetails = {
     groom: groomVideo, bride: brideVideo, scroll: scrollVideo,
     groomPoster: new URL('../../assets/groom-poster.png', import.meta.url).href,
     bridePoster: new URL('../../assets/bride-poster.png', import.meta.url).href,
-    scrollPoster: new URL('../../assets/scroll-poster.png', import.meta.url).href,
+    scrollPoster: new URL('../../assets/scroll-final.png', import.meta.url).href,
     // Put your own mandap image/video in public/assets and set its URL here.
     backgroundVideo: '', backgroundPoster: '',
     // Optional licensed audio URL. Without it, the music toggle plays a gentle synthesized ambience.
